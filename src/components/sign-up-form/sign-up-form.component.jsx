@@ -19,8 +19,6 @@ const SignUpForm = () => {
   const [formField, setFormField] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formField;
 
-  console.log(formField);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormField({ ...formField, [name]: value });
@@ -89,7 +87,6 @@ const SignUpForm = () => {
           value={password}
         ></FormInput>
 
-        <label>Confirm Password</label>
         <FormInput
           label="Confirm Password"
           type="password"
@@ -99,7 +96,7 @@ const SignUpForm = () => {
           value={confirmPassword}
         ></FormInput>
 
-        <Button buttonType='google' type="submit">Sign Up</Button>
+        <Button type="submit">Sign Up</Button>
       </form>
     </div>
   );
