@@ -5,6 +5,8 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
@@ -15,21 +17,21 @@ const firebaseConfig = {
   projectId: "fir-reactjs-clothing",
   storageBucket: "fir-reactjs-clothing.appspot.com",
   messagingSenderId: "685404804976",
-  appId: "1:685404804976:web:4df9efaff98d0a654ba1b5",
+  appId: "1:685404804976:web:4df9efaff98d0a654ba1b5"
 };
 
 // Initialize Firebase
 const fireBaseApp = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const auth = getAuth();
 
-export const signInWithGooglePoup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePoup = () => signInWithPopup(auth, googleProvider);
 
 export const db = getFirestore();
 
@@ -39,29 +41,20 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
   return await createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
-  if (!email || !password) return
-
-  return await signInWithEmailAndPassword(auth, email, password);
-};
-
 export const createUserDocumentFromAuth = async (
   userAuth,
   additionalInformation = {}
 ) => {
-  if (!userAuth.user) {
+  if (!userAuth) {
     return;
   }
 
-  const userDocRef = doc(db, "users", userAuth.user.uid);
-  console.log(userDocRef);
+  const userDocRef = doc(db, "users", userAuth.uid);
 
   const userSnapShot = await getDoc(userDocRef);
-  console.log(userSnapShot);
-  console.log(userSnapShot.exists());
 
   if (!userSnapShot.exists()) {
-    const { displayName, email } = userAuth.user;
+    const { displayName, email } = userAuth;
     const createdAt = new Date();
 
     try {
@@ -78,3 +71,15 @@ export const createUserDocumentFromAuth = async (
 
   return userDocRef;
 };
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStageChangedListener = (callback) => {
+  onAuthStateChanged(auth, callback)
+}

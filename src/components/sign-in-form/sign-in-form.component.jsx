@@ -3,9 +3,8 @@ import FormInput from "../form-input/form-input.component";
 import {
   createUserDocumentFromAuth,
   signInWithGooglePoup,
-  signInWithEmailAndPassword,
   signInAuthUserWithEmailAndPassword,
-} from "../../routes/utils/firebase/firebase.utils";
+} from "../../utils/firebase/firebase.utils";
 
 import "./sign-in-form.styles.scss";
 import Button from "../button/button.component";
@@ -29,16 +28,18 @@ const SignInForm = () => {
   };
 
   const signInWithGoogle = async () => {
-    const res = await signInWithGooglePoup();
-    await createUserDocumentFromAuth(res);
+    await signInWithGooglePoup();
   };
 
   const submitForm = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await signInAuthUserWithEmailAndPassword(email, password);
-      console.log(res);
+      const { user } = await signInAuthUserWithEmailAndPassword(
+        email,
+        password
+      );
+
       resetFormFields();
     } catch (error) {
       switch (error.code) {
